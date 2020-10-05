@@ -21,7 +21,7 @@ if lsmod | grep -q "wilc_sdio" ; then
 	echo "1. WILC-SDIO module is available"
 else
 	echo "1. Inserting the wilc-sdio module" 
-	modprobe wilc-sdio >> wilc-sdio_module.log
+	modprobe wilc-sdio > wilc-sdio_module.log
 	if grep -q "Driver Initializing success" wilc-sdio_module.log ; then
 		echo "WILC-SDIO module insterted successfully"
 	else
@@ -30,7 +30,7 @@ else
 fi
 
 echo "2. Bringing up the wlan0 interface" 
-ifconfig wlan0 up >> wlan0_up.log
+ifconfig wlan0 up > wlan0_up.log
 if ifconfig | grep -q "wlan0" ; then
 	echo "Wireless LAN interface is UP!"
 else
@@ -38,7 +38,7 @@ else
 fi
 
 echo "3. Starting the Host AP deamon" 
-hostapd /etc/wilc_hostapd_open.conf -B & >> hostapd.log
+hostapd /etc/wilc_hostapd_open.conf -B & > hostapd.log
 if ps | grep -q "hostapd" ; 
 then
 	echo "hostapd process has started successfully"
@@ -54,19 +54,14 @@ default-lease-time 3600;
 max-lease-time 7200;
 authoritative;
 
-subnet 192.168.0.1 netmask 255.255.255.0 {
-        option routers                  192.168.0.1;
-        option subnet-mask              255.255.0.0;
-        option domain-search            "tecmint.lan";
-        option domain-name-servers      192.168.0.1;
-        range   192.168.0.10   192.168.0.100;
-        range   192.168.0.110   192.168.0.200;
+subnet 192.168.1.1 netmask 255.255.255.0 {
+        range   192.168.1.10   192.168.1.100;
 }
 EOT
 fi
 
-echo "4. Configuring the AP IP Address to 192.168.0.1"
-ifconfig wlan0 192.168.0.1 
+echo "4. Configuring the AP IP Address to 192.168.1.1"
+ifconfig wlan0 192.168.1.1 
 echo "5. Starting the DHCP server"
 #/etc/init.d/dhcp-server start &
 dhcpd -cf /etc/dhcp/dhcpd.conf 
@@ -77,5 +72,5 @@ echo "Now, The device comes up as an Access Point(AP) and host a webpage to prov
 echo "WiFi station interface"
 echo "\n"
 echo "Use a Phone/Laptop and connect to the 'wilc1000_SoftAP' WiFi AP"
-echo "Using the web browser open http://192.168.0.1"
+echo "Using the web browser open http://192.168.1.1"
 
